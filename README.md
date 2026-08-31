@@ -1,4 +1,3 @@
-cat > README.md << 'EOF'
 # Multi-Scraper Tool
 
 A Flask-based web scraping application for extracting images, links, analyzing SEO metrics, and comparing product prices across UK retailers.
@@ -50,6 +49,7 @@ Visit `http://localhost:5000` in your browser.
 | Frontend | HTML5, CSS3, JavaScript |
 
 ## Project Structure
+
 multiscraper/
 ├── app.py # Main Flask application
 ├── requirements.txt # Python dependencies
@@ -67,6 +67,7 @@ multiscraper/
 ├── css/ # Stylesheets
 ├── js/ # JavaScript files
 └── images/ # Downloaded images (git ignored)
+
 
 
 ## Database Models
@@ -90,6 +91,7 @@ multiscraper/
 ## Features in Detail
 
 ### SEO Analyzer
+
 Rates pages on:
 - Title tag (30-60 characters optimal)
 - Meta description (120-160 characters optimal)
@@ -99,6 +101,7 @@ Rates pages on:
 - Content length (300+ words recommended)
 
 ### Product Comparison
+
 Aggregates data from:
 - Amazon UK
 - Currys
@@ -138,8 +141,3 @@ Feel free to fork and submit pull requests!
 ## License
 
 MIT License
-
----
-
-**Made with ❤️ for portfolio demonstration**
-EOF
