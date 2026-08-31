@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compare Products - MultiScraper</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .navbar-custom {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            padding: 0;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .navbar-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 40px;
+            height: 70px;
+            max-width: 100%;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .navbar-brand {
+            font-size: 24px;
+            font-weight: 700;
+            color: #27ae60 !important;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .navbar-brand:hover {
+            transform: scale(1.05);
+            color: #2ecc71 !important;
+        }
+
+        .nav-items {
+            display: flex;
+            gap: 0;
+            list-style: none;
+            height: 100%;
+            align-items: center;
+            margin: 0;
+        }
+
+        .nav-item {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            margin: 0;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            height: 100%;
+            padding: 0 20px;
+            color: #bdc3c7 !important;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .nav-link:hover {
+            color: #27ae60 !important;
+            background: rgba(39, 174, 96, 0.1);
+        }
+
+        .nav-link.active {
+            color: #27ae60 !important;
+            background: rgba(39, 174, 96, 0.15);
+            border-bottom: 3px solid #27ae60;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 1400px;
+            margin-top: 30px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            color: #667eea;
+            font-weight: 700;
+            margin-bottom: 10px;
+            font-size: 42px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 16px;
+            margin: 0;
+        }
+
+        .search-box {
+            margin-bottom: 40px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .search-box input {
+            flex: 1;
+            min-width: 200px;
+            border-radius: 15px;
+            padding: 15px 25px;
+            border: 2px solid #ddd;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .search-box input:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.2);
+            outline: none;
+        }
+
+        .search-box button {
+            border-radius: 15px;
+            padding: 15px 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            font-size: 16px;
+        }
+
+        .search-box button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .products-list {
+            display: none;
+            margin-bottom: 30px;
+        }
+
+        .products-list h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .products-item {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 2px solid #e0e0e0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .products-item:hover {
+            border-color: #667eea;
+            background: #f0f0ff;
+        }
+
+        .products-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            margin-right: 15px;
+        }
+
+        .product-info {
+            flex: 1;
+        }
+
+        .product-info-name {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .product-info-store {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .product-info-price {
+            font-weight: 700;
+            color: #27ae60;
+            font-size: 16px;
+        }
+
+        .loading-spinner {
+            display: none;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error-message {
+            display: none;
+            background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+            color: #721c24;
+            padding: 15px 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border-left: 5px solid #c3184a;
+        }
+
+        .comparison-container {
+            display: none;
+            margin-top: 40px;
+        }
+
+        .comparison-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .product-search-term {
+            font-size: 24px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .savings-banner {
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 18px;
+            font-weight: bold;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .products-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 40px;
+            margin-bottom: 30px;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            position: relative;
+            transition: all 0.3s ease;
+            border: 3px solid #f0f0f0;
+        }
+
+        .product-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+            border-color: #667eea;
+        }
+
+        .best-value-badge {
+            position: absolute;
+            top: -15px;
+            left: 20px;
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            font-size: 12px;
+            box-shadow: 0 5px 15px rgba(39, 174, 96, 0.4);
+        }
+
+        .store-name {
+            font-size: 22px;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 20px;
+            padding-top: 10px;
+        }
+
+        .product-image-container {
+            width: 100%;
+            height: 220px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        .product-image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .product-image-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 80px;
+            color: white;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .price-section {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 12px;
+            border-left: 5px solid #667eea;
+        }
+
+        .price-label {
+            font-size: 12px;
+            color: #999;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .price-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .price-cheaper {
+            color: #27ae60;
+        }
+
+        .cheaper-badge {
+            background: #d4edda;
+            color: #155724;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-top: 5px;
+            display: inline-block;
+        }
+
+        .rating-section {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #fffbf0;
+            border-radius: 12px;
+            border-left: 5px solid #f39c12;
+        }
+
+        .rating-stars {
+            font-size: 24px;
+            color: #f39c12;
+            margin-right: 10px;
+        }
+
+        .rating-text {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .specs-list {
+            list-style: none;
+            margin: 20px 0;
+        }
+
+        .spec-item {
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .spec-item:last-child {
+            border-bottom: none;
+        }
+
+        .spec-label {
+            font-weight: 600;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .spec-value {
+            color: #333;
+            font-weight: 500;
+        }
+
+        .stock-status {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            background: #d4edda;
+            color: #155724;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .stock-status i {
+            margin-right: 8px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn-custom {
+            flex: 1;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .btn-primary-custom {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-compare {
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+            font-size: 16px;
+        }
+
+        .btn-compare:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(39, 174, 96, 0.3);
+        }
+
+        .btn-compare:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+            display: none;
+        }
+
+        .no-results i {
+            font-size: 60px;
+            opacity: 0.3;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .navbar-wrapper {
+                flex-wrap: wrap;
+                padding: 10px 15px;
+                height: auto;
+            }
+
+            .navbar-brand {
+                width: 100%;
+                padding: 10px 0;
+                font-size: 18px;
+            }
+
+            .nav-items {
+                width: 100%;
+                flex-wrap: wrap;
+            }
+
+            .nav-link {
+                padding: 8px 12px;
+                font-size: 12px;
+            }
+
+            .container {
+                margin: 20px 10px;
+                padding: 20px;
+            }
+
+            .products-row {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .header h1 {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar-custom">
+        <div class="navbar-wrapper">
+            <a href="/" class="navbar-brand">
+                <i class="fas fa-spider"></i> MultiScraper
+            </a>
+            <ul class="nav-items">
+                <li class="nav-item"><a href="/" class="nav-link" data-path="Home">Home</a></li>
+                <li class="nav-item"><a href="image-extractor" class="nav-link" data-path="image-extractor">Image Extractor</a></li>
+                <li class="nav-item"><a href="seo-analyzer" class="nav-link" data-path="seo-analyzer">SEO Analyzer</a></li>
+                <li class="nav-item"><a href="link-extractor" class="nav-link" data-path="link-extractor">Link Extractor</a></li>
+                <li class="nav-item"><a href="scrape-products" class="nav-link" data-path="scrape-products">Scrape Products</a></li>
+                <li class="nav-item"><a href="product-comparison" class="nav-link" data-path="product-comparison">Compare Products</a></li>
+                <li class="nav-item"><a href="history" class="nav-link" data-path="history">History</a></li>
+                <li class="nav-item"><a href="statistics" class="nav-link" data-path="statistics">Statistics</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-balance-scale"></i> Compare Products</h1>
+            <p>Select and compare scraped products from UK websites side-by-side</p>
+        </div>
+
+        <div class="error-message" id="errorMessage"></div>
+
+        <div class="search-box">
+            <input type="text" id="productSearch" class="form-control" placeholder="Search for product name...">
+            <button onclick="loadProducts()" class="btn-primary">
+                <i class="fas fa-search"></i> Load Products
+            </button>
+        </div>
+
+        <div class="loading-spinner" id="loadingSpinner">
+            <div class="spinner"></div>
+            <p style="color: #667eea; font-weight: bold;">Loading products...</p>
+        </div>
+
+        <div class="products-list" id="productsList">
+            <h3>Select Products to Compare (Choose at least 2)</h3>
+            <div id="productsContainer"></div>
+            <button class="btn-compare" onclick="compareSelected()" id="compareBtn" disabled>
+                <i class="fas fa-balance-scale"></i> Compare Selected Products
+            </button>
+        </div>
+
+        <div class="no-results" id="noResults">
+            <i class="fas fa-inbox"></i>
+            <p style="font-size: 18px; margin-top: 10px;">No products found</p>
+            <small>Go to "Scrape Products" page first to scrape products from UK stores</small>
+        </div>
+
+        <div class="comparison-container" id="comparisonContainer">
+            <div class="comparison-header">
+                <div class="product-search-term" id="searchTerm"></div>
+                <div class="savings-banner" id="savingsBanner"></div>
+            </div>
+            <div class="products-row" id="productsRow"></div>
+        </div>
+    </div>
+
+    <script>
+        let allProducts = [];
+        let selectedProducts = [];
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const currentPath = window.location.pathname;
+            const navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(link => {
+                const dataPath = link.getAttribute('data-path');
+                if (dataPath && currentPath.includes(dataPath)) {
+                    link.classList.add('active');
+                } else {
+                    link.classList.remove('active');
+                }
+            });
+
+            loadProducts();
+        });
+
+        function loadProducts() {
+            const searchTerm = document.getElementById('productSearch').value.trim();
+            
+            showLoading();
+            clearMessages();
+
+            const url = searchTerm 
+                ? `/api/products?search=${encodeURIComponent(searchTerm)}`
+                : '/api/products';
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    hideLoading();
+                    if (data.success && data.data.length > 0) {
+                        allProducts = data.data;
+                        displayProductsList(data.data);
+                    } else {
+                        showNoResults();
+                    }
+                })
+                .catch(error => {
+                    hideLoading();
+                    showError('Error loading products: ' + error.message);
+                });
+        }
+
+        function displayProductsList(products) {
+            const container = document.getElementById('productsContainer');
+            const productsList = document.getElementById('productsList');
+            const noResults = document.getElementById('noResults');
+
+            if (products.length === 0) {
+                showNoResults();
+                return;
+            }
+
+            noResults.style.display = 'none';
+            productsList.style.display = 'block';
+
+            container.innerHTML = products.map(product => `
+                <div class="products-item">
+                    <input type="checkbox" value="${product.id}" onchange="updateSelection()">
+                    <div class="product-info">
+                        <div class="product-info-name">${product.product_name}</div>
+                        <div class="product-info-store">${product.store}</div>
+                    </div>
+                    <div class="product-info-price">${product.price}</div>
+                </div>
+            `).join('');
+        }
+
+        function updateSelection() {
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]:checked');
+            selectedProducts = Array.from(checkboxes).map(cb => parseInt(cb.value));
+            
+            const compareBtn = document.getElementById('compareBtn');
+            compareBtn.disabled = selectedProducts.length < 2;
+        }
+
+        function compareSelected() {
+            if (selectedProducts.length < 2) {
+                showError('Please select at least 2 products to compare');
+                return;
+            }
+
+            fetch('/api/compare-products', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ product_ids: selectedProducts })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    displayComparison(data.data);
+                } else {
+                    showError(data.error || 'Failed to compare products');
+                }
+            })
+            .catch(error => showError('Error: ' + error.message));
+        }
+
+        function displayComparison(data) {
+            const container = document.getElementById('comparisonContainer');
+            const row = document.getElementById('productsRow');
+            const searchTerm = document.getElementById('searchTerm');
+            const savingsBanner = document.getElementById('savingsBanner');
+
+            document.getElementById('productsList').style.display = 'none';
+            container.style.display = 'block';
+
+            searchTerm.textContent = data.product_name.charAt(0).toUpperCase() + data.product_name.slice(1) + ' - Comparison';
+            
+            if (data.savings > 0) {
+                savingsBanner.innerHTML = `<strong>SAVE £${Math.round(data.savings)}</strong> - Choose the cheaper option!`;
+            }
+
+            row.innerHTML = data.products.map((product, idx) => {
+                const priceNum = parseFloat(product.price.replace('£', '').replace(',', ''));
+                const minPrice = Math.min(...data.products.map(p => parseFloat(p.price.replace('£', '').replace(',', ''))));
+                const isCheapest = priceNum === minPrice;
+                const isBestValue = idx === 0 && isCheapest;
+
+                let html = `<div class="product-card">`;
+                
+                if (isBestValue) {
+                    html += `<div class="best-value-badge">⭐ BEST VALUE</div>`;
+                }
+
+                html += `
+                    <div class="store-name">${product.store}</div>
+                    <div class="product-image-container">
+                        <img src="${product.image}" alt="${product.product_name}" onerror="this.parentElement.innerHTML='<div class=\\'product-image-placeholder\\'>📦</div>'">
+                    </div>
+                    <div class="price-section">
+                        <div class="price-label">Price</div>
+                        <div class="price-value ${isCheapest ? 'price-cheaper' : ''}">${product.price}</div>
+                        ${isCheapest ? '<span class="cheaper-badge">✓ CHEAPEST</span>' : ''}
+                    </div>
+                    <div class="rating-section">
+                        <span class="rating-stars">⭐ ${product.rating}</span>
+                        <span class="rating-text">${product.rating} Rating (${product.review_count})</span>
+                    </div>
+                    <div class="stock-status"><i class="fas fa-check-circle"></i> ${product.stock_status}</div>
+                    
+                    <ul class="specs-list">
+                        ${Object.entries(product.specs).map(([key, value]) => `
+                            <li class="spec-item">
+                                <span class="spec-label">${key}</span>
+                                <span class="spec-value">${value}</span>
+                            </li>
+                        `).join('')}
+                    </ul>
+                    
+                    <div class="action-buttons">
+                        <button class="btn-custom btn-primary-custom" onclick="window.open('${product.url}', '_blank')">
+                            <i class="fas fa-external-link-alt"></i> View on Store
+                        </button>
+                    </div>
+                </div>`;
+
+                return html;
+            }).join('');
+        }
+
+        function showLoading() {
+            document.getElementById('loadingSpinner').style.display = 'block';
+            document.getElementById('productsList').style.display = 'none';
+            document.getElementById('noResults').style.display = 'none';
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingSpinner').style.display = 'none';
+        }
+
+        function showError(msg) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.innerHTML = msg;
+            errorDiv.style.display = 'block';
+        }
+
+        function showNoResults() {
+            document.getElementById('noResults').style.display = 'block';
+            document.getElementById('productsList').style.display = 'none';
+        }
+
+        function clearMessages() {
+            document.getElementById('errorMessage').style.display = 'none';
+        }
+
+        document.getElementById('productSearch').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                loadProducts();
+            }
+        });
+    </script>
+</body>
+</html>

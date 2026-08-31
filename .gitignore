@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+*.db
+.env
+.DS_Store
+static/images/
+static/exported_data/
+venv/
+instance/
+*.log

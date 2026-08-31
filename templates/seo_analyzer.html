@@ -1,0 +1,231 @@
+<!-- SEO ANALYZER - FIXED VERSION -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SEO Analyzer - MultiScraper</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        /* UNIVERSAL NAVBAR */
+        .navbar-custom { background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%); padding: 0; box-shadow: 0 4px 15px rgba(0,0,0,0.3); position: sticky; top: 0; z-index: 1000; border-bottom: 3px solid #667eea; }
+        .navbar-wrapper { display: flex; align-items: center; justify-content: space-between; padding: 0 40px; height: 70px; width: 100%; }
+        .navbar-brand { font-size: 24px; font-weight: 700; color: #27ae60 !important; text-decoration: none; display: flex; align-items: center; gap: 10px; transition: all 0.3s ease; }
+        .navbar-brand:hover { transform: scale(1.05); color: #2ecc71 !important; }
+        .nav-items { display: flex; list-style: none; height: 100%; align-items: center; margin: 0; }
+        .nav-item { height: 100%; display: flex; align-items: center; }
+        .nav-link { display: flex; align-items: center; height: 100%; padding: 0 20px; color: #bdc3c7 !important; text-decoration: none; font-size: 14px; font-weight: 500; transition: all 0.3s ease; white-space: nowrap; }
+        .nav-link:hover { color: #27ae60 !important; background: rgba(39,174,96,0.1); }
+        .nav-link.active { color: #27ae60 !important; background: rgba(39,174,96,0.15); border-bottom: 3px solid #27ae60; }
+
+        body { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px 0; }
+        .container { background: white; border-radius: 15px; padding: 30px; box-shadow: 0 10px 40px rgba(0,0,0,0.3); max-width: 1000px; margin-top: 30px; }
+        .header { text-align: center; margin-bottom: 40px; }
+        .header h1 { color: #667eea; font-weight: bold; margin-bottom: 10px; }
+        .search-box { margin-bottom: 30px; }
+        .search-box input { border-radius: 25px; padding: 12px 20px; border: 2px solid #667eea; font-size: 16px; }
+        .search-box button { border-radius: 25px; padding: 12px 30px; background: #667eea; border: none; color: white; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .search-box button:hover { background: #764ba2; transform: translateY(-2px); }
+        .score-circle { width: 200px; height: 200px; margin: 0 auto 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-direction: column; color: white; font-weight: bold; box-shadow: 0 10px 30px rgba(0,0,0,0.2); background: conic-gradient(#28a745 0% 75%, #f0f0f0 75% 100%); }
+        .score-display { display: none; text-align: center; margin: 40px 0; }
+        .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-top: 30px; }
+        .metric-card { background: #f8f9fa; border: 1px solid #e0e0e0; border-radius: 10px; padding: 20px; transition: 0.3s; }
+        .metric-card:hover { box-shadow: 0 5px 20px rgba(102,126,234,0.2); transform: translateY(-5px); }
+        .metric-title { font-weight: bold; color: #667eea; margin-bottom: 15px; font-size: 16px; }
+        .metric-item { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #e0e0e0; }
+        .metric-label { color: #666; font-size: 14px; }
+        .metric-value { font-weight: bold; color: #333; }
+        .loading-spinner { display: none; text-align: center; padding: 40px; }
+        .spinner { border: 4px solid #f3f3f3; border-top: 4px solid #667eea; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .error-message { display: none; background: #f8d7da; color: #721c24; padding: 15px; border-radius: 5px; margin-bottom: 20px; border-left: 4px solid #c3184a; }
+
+        @media (max-width: 1024px) { .navbar-wrapper { padding: 0 20px; } .nav-link { padding: 0 15px; font-size: 13px; } }
+        @media (max-width: 768px) { .navbar-wrapper { flex-wrap: wrap; padding: 10px 15px; height: auto; } .navbar-brand { width: 100%; padding: 10px 0; } .nav-items { width: 100%; flex-wrap: wrap; } .nav-link { padding: 8px 12px; font-size: 12px; } }
+    </style>
+</head>
+<body>
+    <!-- NAVIGATION BAR -->
+    <nav class="navbar-custom">
+        <div class="navbar-wrapper">
+            <a href="/" class="navbar-brand">
+                <i class="fas fa-spider"></i> MultiScraper
+            </a>
+            <ul class="nav-items">
+                <li class="nav-item"><a href="/" class="nav-link" data-path="/">Home</a></li>
+                <li class="nav-item"><a href="/image-extractor" class="nav-link" data-path="/image-extractor">Image Extractor</a></li>
+                <li class="nav-item"><a href="/seo-analyzer" class="nav-link" data-path="/seo-analyzer">SEO Analyzer</a></li>
+                <li class="nav-item"><a href="/link-extractor" class="nav-link" data-path="/link-extractor">Link Extractor</a></li>
+                <li class="nav-item"><a href="/product-comparison" class="nav-link" data-path="/product-comparison">Product Comparison</a></li>
+                <li class="nav-item"><a href="/history" class="nav-link" data-path="/history">History</a></li>
+                <li class="nav-item"><a href="/statistics" class="nav-link" data-path="/statistics">Statistics</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="header">
+            <h1>SEO Analyzer</h1>
+            <p>Analyze your webpage SEO performance and get detailed health score</p>
+        </div>
+
+        <div class="error-message" id="errorMessage"></div>
+        
+        <div class="search-box">
+            <div class="row">
+                <div class="col-md-10">
+                    <input type="text" id="urlInput" class="form-control" placeholder="Enter URL (e.g., https://example.com)">
+                </div>
+                <div class="col-md-2">
+                    <button onclick="analyzeSEO()" class="btn btn-block" style="background: #667eea; border: none; color: white;">
+                        <i class="fas fa-search"></i> Analyze
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="loading-spinner" id="loadingSpinner">
+            <div class="spinner"></div>
+            <p>Analyzing website...</p>
+        </div>
+
+        <div class="score-display" id="scoreDisplay">
+            <div class="score-circle" id="scoreCircle">
+                <div style="font-size: 36px; margin-bottom: 10px;" id="gradeDisplay">A</div>
+                <div style="font-size: 24px;" id="scoreNum">95</div>
+            </div>
+            <div style="font-size: 18px; color: #333; margin-top: 20px; font-weight: 500;">
+                <strong>SEO Health Score</strong>
+                <p id="scoreDescription" style="margin: 10px 0 0 0; color: #666;"></p>
+            </div>
+        </div>
+
+        <div class="metrics-grid" id="metricsGrid" style="display: none;">
+            <div class="metric-card">
+                <div class="metric-title"><i class="fas fa-heading"></i> Page Title</div>
+                <div class="metric-item"><span class="metric-label">Status</span><span class="metric-value" id="titleStatus">-</span></div>
+                <div class="metric-item"><span class="metric-label">Length</span><span class="metric-value" id="titleLength">-</span></div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-title"><i class="fas fa-link"></i> Links</div>
+                <div class="metric-item"><span class="metric-label">Internal</span><span class="metric-value" id="linkInternal">-</span></div>
+                <div class="metric-item"><span class="metric-label">External</span><span class="metric-value" id="linkExternal">-</span></div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-title"><i class="fas fa-image"></i> Images</div>
+                <div class="metric-item"><span class="metric-label">Total</span><span class="metric-value" id="imgTotal">-</span></div>
+                <div class="metric-item"><span class="metric-label">With Alt</span><span class="metric-value" id="imgAlt">-</span></div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-title"><i class="fas fa-file-alt"></i> Content</div>
+                <div class="metric-item"><span class="metric-label">Words</span><span class="metric-value" id="wordCount">-</span></div>
+                <div class="metric-item"><span class="metric-label">Characters</span><span class="metric-value" id="charCount">-</span></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Navbar active state
+            const currentPath = window.location.pathname;
+            const navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(link => {
+                const dataPath = link.getAttribute('data-path');
+                if (dataPath === currentPath || currentPath.includes(dataPath)) {
+                    link.classList.add('active');
+                } else {
+                    link.classList.remove('active');
+                }
+            });
+        });
+
+        function analyzeSEO() {
+            console.log('analyzeSEO called');
+            const url = document.getElementById('urlInput').value.trim();
+            if (!url) {
+                showError('Please enter a URL');
+                return;
+            }
+            console.log('URL:', url);
+            
+            showLoading();
+            
+            const formData = new FormData();
+            formData.append('url', url);
+            
+            fetch('/analyze-seo', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                console.log('Response status:', response.status);
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                return response.json();
+            })
+            .then(data => {
+                console.log('Response data:', data);
+                hideLoading();
+                if (data.success) {
+                    displaySeoResults(data.data);
+                } else {
+                    showError(data.error || 'Failed to analyze SEO');
+                }
+            })
+            .catch(error => {
+                console.error('Fetch error:', error);
+                hideLoading();
+                showError('Network error: ' + error.message);
+            });
+        }
+
+        function displaySeoResults(data) {
+            console.log('Displaying results:', data);
+            
+            // Update score circle
+            const scoreCircle = document.getElementById('scoreCircle');
+            const gradeDisplay = document.getElementById('gradeDisplay');
+            const scoreNum = document.getElementById('scoreNum');
+            
+            // Map backend score to frontend display
+            const score = data.score || 0;
+            const color = score >= 80 ? '#28a745' : score >= 60 ? '#ffc107' : score >= 40 ? '#ff9800' : '#dc3545';
+            const grade = score >= 80 ? 'A' : score >= 60 ? 'B' : score >= 40 ? 'C' : 'F';
+            
+            scoreCircle.style.background = `conic-gradient(${color} 0 ${score}%, #f0f0f0 ${score}% 100%)`;
+            gradeDisplay.textContent = grade;
+            scoreNum.textContent = score;
+            
+            document.getElementById('scoreDisplay').style.display = 'block';
+            document.getElementById('metricsGrid').style.display = 'grid';
+            
+            // Update metrics - match backend structure
+            document.getElementById('titleStatus').textContent = data.metrics?.title?.present ? 'Present' : 'Missing';
+            document.getElementById('titleLength').textContent = (data.metrics?.title?.length || 0) + ' chars';
+            document.getElementById('linkInternal').textContent = data.metrics?.links?.internal || 0;
+            document.getElementById('linkExternal').textContent = data.metrics?.links?.external || 0;
+            document.getElementById('imgTotal').textContent = data.metrics?.images?.total || 0;
+            document.getElementById('imgAlt').textContent = data.metrics?.images?.with_alt || 0;
+            document.getElementById('wordCount').textContent = data.metrics?.content?.words || 0;
+            document.getElementById('charCount').textContent = data.metrics?.content?.characters?.toLocaleString() || 0;
+        }
+
+        function showLoading() {
+            document.getElementById('loadingSpinner').style.display = 'block';
+            document.getElementById('errorMessage').style.display = 'none';
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingSpinner').style.display = 'none';
+        }
+
+        function showError(msg) {
+            hideLoading();
+            document.getElementById('errorMessage').innerHTML = msg;
+            document.getElementById('errorMessage').style.display = 'block';
+        }
+    </script>
+</body>
+</html>

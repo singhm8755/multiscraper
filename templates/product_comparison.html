@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Comparison - MultiScraper</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        /* UNIVERSAL NAVBAR */
+        .navbar-custom {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            padding: 0;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .navbar-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 40px;
+            height: 70px;
+            max-width: 100%;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .navbar-brand {
+            font-size: 24px;
+            font-weight: 700;
+            color: #27ae60 !important;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .navbar-brand:hover {
+            transform: scale(1.05);
+            color: #2ecc71 !important;
+        }
+
+        .nav-items {
+            display: flex;
+            gap: 0;
+            list-style: none;
+            height: 100%;
+            align-items: center;
+            margin: 0;
+        }
+
+        .nav-item {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            margin: 0;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            height: 100%;
+            padding: 0 20px;
+            color: #bdc3c7 !important;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .nav-link:hover {
+            color: #27ae60 !important;
+            background: rgba(39, 174, 96, 0.1);
+        }
+
+        .nav-link.active {
+            color: #27ae60 !important;
+            background: rgba(39, 174, 96, 0.15);
+            border-bottom: 3px solid #27ae60;
+        }
+
+        /* PAGE STYLES */
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 1400px;
+            margin-top: 30px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            color: #667eea;
+            font-weight: 700;
+            margin-bottom: 10px;
+            font-size: 42px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 16px;
+            margin: 0;
+        }
+
+        .search-box {
+            margin-bottom: 40px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .search-box input {
+            flex: 1;
+            border-radius: 15px;
+            padding: 15px 25px;
+            border: 2px solid #ddd;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .search-box input:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.2);
+            outline: none;
+        }
+
+        .search-box button {
+            border-radius: 15px;
+            padding: 15px 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            font-size: 16px;
+        }
+
+        .search-box button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        /* COMPARISON CARDS */
+        .comparison-container {
+            display: none;
+            margin-top: 40px;
+        }
+
+        .comparison-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .product-search-term {
+            font-size: 24px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .savings-banner {
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 18px;
+            font-weight: bold;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .products-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 30px;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            position: relative;
+            transition: all 0.3s ease;
+            border: 3px solid #f0f0f0;
+        }
+
+        .product-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+            border-color: #667eea;
+        }
+
+        .best-value-badge {
+            position: absolute;
+            top: -15px;
+            left: 20px;
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            font-size: 12px;
+            box-shadow: 0 5px 15px rgba(39, 174, 96, 0.4);
+        }
+
+        .store-name {
+            font-size: 22px;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 20px;
+            padding-top: 10px;
+        }
+
+        .product-image-container {
+            width: 100%;
+            height: 220px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        .product-image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .product-image-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 80px;
+            color: white;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .product-image-container.store2 {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .price-section {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 12px;
+            border-left: 5px solid #667eea;
+        }
+
+        .price-label {
+            font-size: 12px;
+            color: #999;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .price-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .price-cheaper {
+            color: #27ae60;
+        }
+
+        .cheaper-badge {
+            background: #d4edda;
+            color: #155724;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-top: 5px;
+            display: inline-block;
+        }
+
+        .rating-section {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #fffbf0;
+            border-radius: 12px;
+            border-left: 5px solid #f39c12;
+        }
+
+        .rating-stars {
+            font-size: 24px;
+            color: #f39c12;
+            margin-right: 10px;
+        }
+
+        .rating-text {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .specs-list {
+            list-style: none;
+            margin: 20px 0;
+        }
+
+        .spec-item {
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .spec-item:last-child {
+            border-bottom: none;
+        }
+
+        .spec-label {
+            font-weight: 600;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .spec-value {
+            color: #333;
+            font-weight: 500;
+        }
+
+        .stock-status {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            background: #d4edda;
+            color: #155724;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .stock-status i {
+            margin-right: 8px;
+        }
+
+        /* PROS & CONS */
+        .pros-cons-container {
+            margin-top: 20px;
+        }
+
+        .pros-section, .cons-section {
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 12px;
+        }
+
+        .pros-section {
+            background: #d4edda;
+            border-left: 5px solid #27ae60;
+        }
+
+        .cons-section {
+            background: #f8d7da;
+            border-left: 5px solid #c3184a;
+        }
+
+        .section-title {
+            font-weight: bold;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .pros-section .section-title {
+            color: #155724;
+        }
+
+        .cons-section .section-title {
+            color: #721c24;
+        }
+
+        .badge-item {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 15px;
+            margin: 3px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .pros-section .badge-item {
+            background: rgba(39, 174, 96, 0.2);
+            color: #155724;
+        }
+
+        .cons-section .badge-item {
+            background: rgba(195, 24, 74, 0.2);
+            color: #721c24;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn-custom {
+            flex: 1;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .btn-primary-custom {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary-custom {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .btn-secondary-custom:hover {
+            background: #f9f9f9;
+        }
+
+        /* EXPORT BUTTONS */
+        .export-buttons {
+            text-align: center;
+            margin-top: 40px;
+            display: none;
+        }
+
+        .export-buttons button {
+            margin: 0 10px;
+            padding: 12px 30px;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+            font-size: 15px;
+        }
+
+        .btn-csv {
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            color: white;
+        }
+
+        .btn-csv:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(39, 174, 96, 0.4);
+        }
+
+        .btn-print {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+        }
+
+        .btn-print:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(52, 152, 219, 0.4);
+        }
+
+        /* LOADING & MESSAGES */
+        .loading-spinner {
+            display: none;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error-message {
+            display: none;
+            background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+            color: #721c24;
+            padding: 15px 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border-left: 5px solid #c3184a;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+            display: none;
+        }
+
+        .no-results i {
+            font-size: 60px;
+            opacity: 0.3;
+            margin-bottom: 20px;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 1024px) {
+            .navbar-wrapper { padding: 0 20px; }
+            .nav-link { padding: 0 15px; font-size: 13px; }
+            .container { padding: 30px; }
+        }
+
+        @media (max-width: 768px) {
+            .navbar-wrapper { flex-wrap: wrap; padding: 10px 15px; height: auto; }
+            .navbar-brand { width: 100%; padding: 10px 0; font-size: 18px; }
+            .nav-items { width: 100%; flex-wrap: wrap; }
+            .nav-link { padding: 8px 12px; font-size: 12px; }
+            .container { margin: 20px 10px; padding: 20px; }
+            .search-box { flex-direction: column; }
+            .products-row { grid-template-columns: 1fr; gap: 20px; }
+            .header h1 { font-size: 28px; }
+            .action-buttons { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVIGATION BAR -->
+       <nav class="navbar-custom">
+        <div class="navbar-wrapper">
+            <a href="/" class="navbar-brand">
+                <i class="fas fa-spider"></i> MultiScraper
+            </a>
+            <ul class="nav-items">
+                <li class="nav-item">
+                    <a href="/" class="nav-link" data-path="/">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/image-extractor" class="nav-link" data-path="/image-extractor">Image Extractor</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/seo-analyzer" class="nav-link" data-path="/seo-analyzer">SEO Analyzer</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/link-extractor" class="nav-link" data-path="/link-extractor">Link Extractor</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/product-comparison" class="nav-link" data-path="/product-comparison">Product Comparison</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/history" class="nav-link" data-path="/history">History</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/statistics" class="nav-link" data-path="/statistics">Statistics</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-balance-scale"></i> Smart Product Comparison</h1>
+            <p>Find the best deals across multiple stores - Compare, Save, Shop Smart!</p>
+        </div>
+
+        <div class="error-message" id="errorMessage"></div>
+
+        <div class="search-box">
+            <input type="text" id="productInput" class="form-control" placeholder="Search: laptop, iphone, samsung, macbook, headphones...">
+            <button onclick="compareProducts()"><i class="fas fa-search"></i> Compare Now</button>
+        </div>
+
+        <div class="loading-spinner" id="loadingSpinner">
+            <div class="spinner"></div>
+            <p style="color: #667eea; font-weight: bold;">Searching products...</p>
+        </div>
+
+        <div class="no-results" id="noResults">
+            <i class="fas fa-inbox"></i>
+            <p style="font-size: 18px; margin-top: 10px;">No products found</p>
+            <small>Try: laptop, iphone, samsung, macbook, headphones</small>
+        </div>
+
+        <!-- COMPARISON CONTAINER -->
+        <div class="comparison-container" id="comparisonContainer">
+            <div class="comparison-header">
+                <div class="product-search-term" id="searchTerm"></div>
+                <div class="savings-banner" id="savingsBanner"></div>
+            </div>
+
+            <div class="products-row" id="productsRow"></div>
+
+            <div class="export-buttons" id="exportButtons">
+                <button class="btn-csv" onclick="downloadCSV()"><i class="fas fa-download"></i> Download Comparison (CSV)</button>
+                <button class="btn-print" onclick="window.print()"><i class="fas fa-print"></i> Print Comparison</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Product images with WORKING URLs (Free image placeholders)
+        const productEmojis = {
+            'laptop': '💻',
+            'iphone': '📱',
+            'samsung': '📱',
+            'macbook': '🍎',
+            'headphones': '🎧'
+        };
+
+        // Auto-highlight active nav link
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentPath = window.location.pathname;
+            const navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(link => {
+                const dataPath = link.getAttribute('data-path');
+                if (dataPath === currentPath) {
+                    link.classList.add('active');
+                } else {
+                    link.classList.remove('active');
+                }
+            });
+        });
+
+        function compareProducts() {
+            const product = document.getElementById('productInput').value.trim().toLowerCase();
+            if (!product) {
+                showError('Please enter a product name');
+                return;
+            }
+
+            showLoading();
+            clearMessages();
+
+            fetch('/api/compare-products', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ product: product })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    hideLoading();
+                    if (data.success && data.products.length > 0) {
+                        displayComparison(data.products, product);
+                    } else {
+                        showNoResults();
+                    }
+                })
+                .catch(error => {
+                    hideLoading();
+                    showError('Error: ' + error.message);
+                });
+        }
+
+        function displayComparison(products, searchTerm) {
+            const container = document.getElementById('comparisonContainer');
+            const row = document.getElementById('productsRow');
+            const noResults = document.getElementById('noResults');
+            const exportButtons = document.getElementById('exportButtons');
+
+            if (products.length === 0) {
+                showNoResults();
+                return;
+            }
+
+            noResults.style.display = 'none';
+            container.style.display = 'block';
+            exportButtons.style.display = 'block';
+
+            document.getElementById('searchTerm').textContent = searchTerm.charAt(0).toUpperCase() + searchTerm.slice(1);
+
+            const prices = products.map(p => {
+                const price = p.details.Price.replace(/[^0-9.]/g, '');
+                return parseFloat(price);
+            });
+            const maxPrice = Math.max(...prices);
+            const minPrice = Math.min(...prices);
+            const savings = maxPrice - minPrice;
+
+            document.getElementById('savingsBanner').innerHTML = 
+                `🎉 <strong>SAVE $${savings.toFixed(0)}</strong> - Choose the cheaper option!`;
+
+            row.innerHTML = '';
+            products.forEach((product, idx) => {
+                const price = product.details.Price.replace(/[^0-9.]/g, '');
+                const isPriceMin = parseFloat(price) === minPrice;
+                const isBestValue = idx === 0 && isPriceMin;
+
+                const emoji = productEmojis[searchTerm] || '🛍️';
+
+                let html = `
+                    <div class="product-card">
+                        ${isBestValue ? '<div class="best-value-badge">⭐ BEST VALUE</div>' : ''}
+                        <div class="store-name">${product.store}</div>
+                        
+                        <div class="product-image-container ${idx === 1 ? 'store2' : ''}">
+                            <div class="product-image-placeholder">${emoji}</div>
+                        </div>
+
+                        <div class="price-section">
+                            <div class="price-label">Price</div>
+                            <div class="price-value ${isPriceMin ? 'price-cheaper' : ''}">
+                                ${product.details.Price}
+                                ${isPriceMin ? '<span class="cheaper-badge">💚 CHEAPEST</span>' : ''}
+                            </div>
+                        </div>
+
+                        <div class="rating-section">
+                            <span class="rating-stars">${'⭐'.repeat(Math.round(parseFloat(product.details.Rating)))}</span>
+                            <span class="rating-text">${product.details.Rating} Rating</span>
+                        </div>
+
+                        <div class="stock-status">
+                            <i class="fas fa-check-circle"></i> ${product.details.Stock}
+                        </div>
+`;
+
+                html += '<ul class="specs-list">';
+                Object.keys(product.details).forEach(key => {
+                    if (!['Price', 'Rating', 'Stock'].includes(key)) {
+                        html += `
+                            <li class="spec-item">
+                                <span class="spec-label">${key}</span>
+                                <span class="spec-value">${product.details[key]}</span>
+                            </li>
+                        `;
+                    }
+                });
+                html += '</ul>';
+
+                const pros = getPros(product, idx, minPrice);
+                const cons = getCons(product, idx, minPrice);
+
+                html += `
+                    <div class="pros-cons-container">
+                        <div class="pros-section">
+                            <div class="section-title">✅ PROS</div>
+                            ${pros.map(p => `<span class="badge-item">• ${p}</span>`).join('')}
+                        </div>
+                        <div class="cons-section">
+                            <div class="section-title">❌ CONS</div>
+                            ${cons.map(c => `<span class="badge-item">• ${c}</span>`).join('')}
+                        </div>
+                    </div>
+
+                    <div class="action-buttons">
+                        <button class="btn-custom btn-primary-custom" onclick="saveComparison('${product.name}', '${product.store}')">
+                            <i class="fas fa-save"></i> Save Comparison
+                        </button>
+                        <button class="btn-custom btn-secondary-custom" onclick="viewDetails('${product.name}')">
+                            <i class="fas fa-info-circle"></i> View Details
+                        </button>
+                    </div>
+                `;
+
+                row.innerHTML += html;
+            });
+
+            // Save to localStorage for history
+            const comparisonData = {
+                product: searchTerm,
+                date: new Date().toLocaleString(),
+                products: products
+            };
+            localStorage.setItem(`comparison_${Date.now()}`, JSON.stringify(comparisonData));
+        }
+
+        function getPros(product, idx, minPrice) {
+            const price = product.details.Price.replace(/[^0-9.]/g, '');
+            const isPriceMin = parseFloat(price) === minPrice;
+            const rating = parseFloat(product.details.Rating);
+
+            const pros = [];
+            if (isPriceMin) pros.push('Cheapest Price');
+            if (rating >= 4.5) pros.push('Excellent Rating');
+            if (product.details.Stock === 'In Stock') pros.push('In Stock');
+            if (product.details.RAM && product.details.RAM.includes('16GB')) pros.push('High RAM');
+            if (product.details.Storage && product.details.Storage.includes('512')) pros.push('Large Storage');
+            
+            return pros.length > 0 ? pros : ['Good Option'];
+        }
+
+        function getCons(product, idx, minPrice) {
+            const price = product.details.Price.replace(/[^0-9.]/g, '');
+            const isPriceMin = parseFloat(price) === minPrice;
+            const rating = parseFloat(product.details.Rating);
+
+            const cons = [];
+            if (!isPriceMin) cons.push('Higher Price');
+            if (rating < 4.5) cons.push('Lower Rating');
+            if (product.details.Stock === 'Limited Stock') cons.push('Limited Availability');
+            
+            return cons.length > 0 ? cons : ['Few Minor Issues'];
+        }
+
+        function saveComparison(productName, storeName) {
+            alert(`✅ Comparison saved!\n\nProduct: ${productName}\nStore: ${storeName}\n\nView your saved comparisons in the History page.`);
+        }
+
+        function viewDetails(productName) {
+            alert(`📋 Detailed Info for ${productName}\n\nFull specifications and reviews available on the store website.`);
+        }
+
+        function downloadCSV() {
+            const searchTerm = document.getElementById('searchTerm').textContent;
+            const cards = document.querySelectorAll('.product-card');
+            
+            let csv = 'Product Comparison Report\n';
+            csv += `Search Term: ${searchTerm}\n`;
+            csv += `Generated: ${new Date().toLocaleString()}\n\n`;
+            csv += 'Store,Price,Rating,Stock\n';
+
+            cards.forEach(card => {
+                const storeName = card.querySelector('.store-name').textContent;
+                const price = card.querySelector('.price-value').textContent.trim();
+                const rating = card.querySelector('.rating-text').textContent.trim();
+                const stock = card.querySelector('.stock-status').textContent.trim();
+                
+                csv += `"${storeName}","${price}","${rating}","${stock}"\n`;
+            });
+
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${searchTerm}-comparison.csv`;
+            a.click();
+        }
+
+        function showLoading() {
+            document.getElementById('loadingSpinner').style.display = 'block';
+            document.getElementById('comparisonContainer').style.display = 'none';
+            document.getElementById('noResults').style.display = 'none';
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingSpinner').style.display = 'none';
+        }
+
+        function showError(msg) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.innerHTML = msg;
+            errorDiv.style.display = 'block';
+        }
+
+        function showNoResults() {
+            document.getElementById('noResults').style.display = 'block';
+            document.getElementById('comparisonContainer').style.display = 'none';
+        }
+
+        function clearMessages() {
+            document.getElementById('errorMessage').style.display = 'none';
+        }
+
+        document.getElementById('productInput').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                compareProducts();
+            }
+        });
+    </script>
+</body>
+</html>

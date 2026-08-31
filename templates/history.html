@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>History - MultiScraper</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        /* UNIVERSAL NAVBAR */
+        .navbar-custom {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            padding: 0;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .navbar-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 40px;
+            height: 70px;
+            max-width: 100%;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .navbar-brand {
+            font-size: 24px;
+            font-weight: 700;
+            color: #27ae60 !important;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .navbar-brand:hover {
+            transform: scale(1.05);
+            color: #2ecc71 !important;
+        }
+
+        .nav-items {
+            display: flex;
+            gap: 0;
+            list-style: none;
+            height: 100%;
+            align-items: center;
+            margin: 0;
+        }
+
+        .nav-item {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            margin: 0;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            height: 100%;
+            padding: 0 20px;
+            color: #bdc3c7 !important;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .nav-link:hover {
+            color: #27ae60 !important;
+            background: rgba(39, 174, 96, 0.1);
+        }
+
+        .nav-link.active {
+            color: #27ae60 !important;
+            background: rgba(39, 174, 96, 0.15);
+            border-bottom: 3px solid #27ae60;
+        }
+
+        /* PAGE STYLES */
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 1200px;
+            margin-top: 30px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            color: #667eea;
+            font-weight: 700;
+            margin-bottom: 10px;
+            font-size: 42px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 16px;
+            margin: 0;
+        }
+
+        .filters {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 10px 20px;
+            border: 2px solid #667eea;
+            background: white;
+            color: #667eea;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .filter-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .filter-btn:hover {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .history-item {
+            background: white;
+            border: 2px solid #f0f0f0;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .history-item:hover {
+            border-color: #667eea;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.15);
+            transform: translateY(-3px);
+        }
+
+        .history-content {
+            flex: 1;
+        }
+
+        .history-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .history-meta {
+            display: flex;
+            gap: 20px;
+            color: #999;
+            font-size: 13px;
+        }
+
+        .history-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .history-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-action {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-view {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-view:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-delete {
+            background: #f8d7da;
+            color: #c3184a;
+        }
+
+        .btn-delete:hover {
+            background: #c3184a;
+            color: white;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .empty-state i {
+            font-size: 60px;
+            opacity: 0.3;
+            margin-bottom: 20px;
+        }
+
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.2);
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        @media (max-width: 768px) {
+            .navbar-wrapper { flex-wrap: wrap; padding: 10px 15px; height: auto; }
+            .navbar-brand { width: 100%; padding: 10px 0; font-size: 18px; }
+            .nav-items { width: 100%; flex-wrap: wrap; }
+            .nav-link { padding: 8px 12px; font-size: 12px; }
+            .container { margin: 20px 10px; padding: 20px; }
+            .history-item { flex-direction: column; align-items: flex-start; }
+            .history-actions { width: 100%; margin-top: 15px; }
+            .header h1 { font-size: 28px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- UNIVERSAL NAVBAR -->
+    <nav class="navbar-custom">
+        <div class="navbar-wrapper">
+            <a href="/" class="navbar-brand">
+                <i class="fas fa-spider"></i> MultiScraper
+            </a>
+            <ul class="nav-items">
+                <li class="nav-item"><a href="/" class="nav-link" data-path="/">Home</a></li>
+                <li class="nav-item"><a href="/image-extractor" class="nav-link" data-path="/image-extractor">Image Extractor</a></li>
+                <li class="nav-item"><a href="/seo-analyzer" class="nav-link" data-path="/seo-analyzer">SEO Analyzer</a></li>
+                <li class="nav-item"><a href="/link-extractor" class="nav-link" data-path="/link-extractor">Link Extractor</a></li>
+                <li class="nav-item"><a href="/product-comparison" class="nav-link" data-path="/product-comparison">Product Comparison</a></li>
+                <li class="nav-item"><a href="/history" class="nav-link" data-path="/history">History</a></li>
+                <li class="nav-item"><a href="/statistics" class="nav-link" data-path="/statistics">Statistics</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-history"></i> Comparison History</h1>
+            <p>View all your saved product comparisons</p>
+        </div>
+
+        <!-- STATS -->
+        <div class="stats-row" id="statsRow"></div>
+
+        <!-- FILTERS -->
+        <div class="filters">
+            <button class="filter-btn active" onclick="filterHistory('all')">
+                <i class="fas fa-list"></i> All
+            </button>
+            <button class="filter-btn" onclick="filterHistory('today')">
+                <i class="fas fa-calendar-today"></i> Today
+            </button>
+            <button class="filter-btn" onclick="filterHistory('week')">
+                <i class="fas fa-calendar-week"></i> This Week
+            </button>
+            <button class="filter-btn" onclick="clearAllHistory()">
+                <i class="fas fa-trash"></i> Clear All
+            </button>
+        </div>
+
+        <!-- HISTORY LIST -->
+        <div id="historyList"></div>
+
+        <!-- EMPTY STATE -->
+        <div class="empty-state" id="emptyState">
+            <i class="fas fa-inbox"></i>
+            <p style="font-size: 18px; margin-top: 10px;">No comparison history yet</p>
+            <small>Go to Product Comparison to save your first comparison!</small>
+        </div>
+    </div>
+
+    <script>
+        // Auto-highlight active nav link
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentPath = window.location.pathname;
+            const navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(link => {
+                const dataPath = link.getAttribute('data-path');
+                if (dataPath === currentPath) {
+                    link.classList.add('active');
+                } else {
+                    link.classList.remove('active');
+                }
+            });
+            
+            loadHistory();
+        });
+
+        function loadHistory() {
+            const historyData = [];
+            
+            // Get all comparisons from localStorage
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key.startsWith('comparison_')) {
+                    try {
+                        const data = JSON.parse(localStorage.getItem(key));
+                        data.id = key;
+                        historyData.push(data);
+                    } catch (e) {
+                        console.error('Error parsing history item:', e);
+                    }
+                }
+            }
+
+            // Sort by date (newest first)
+            historyData.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+            displayHistory(historyData);
+            displayStats(historyData);
+        }
+
+        function displayStats(historyData) {
+            const totalComparisons = historyData.length;
+            const products = [...new Set(historyData.map(h => h.product))];
+            const stores = new Set();
+            historyData.forEach(h => {
+                h.products.forEach(p => stores.add(p.store));
+            });
+
+            const statsHtml = `
+                <div class="stat-card">
+                    <div class="stat-value">${totalComparisons}</div>
+                    <div class="stat-label">Total Comparisons</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${products.length}</div>
+                    <div class="stat-label">Different Products</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${stores.size}</div>
+                    <div class="stat-label">Stores Compared</div>
+                </div>
+            `;
+
+            document.getElementById('statsRow').innerHTML = statsHtml;
+        }
+
+        function displayHistory(historyData) {
+            const historyList = document.getElementById('historyList');
+            const emptyState = document.getElementById('emptyState');
+
+            if (historyData.length === 0) {
+                historyList.innerHTML = '';
+                emptyState.style.display = 'block';
+                return;
+            }
+
+            emptyState.style.display = 'none';
+            historyList.innerHTML = '';
+
+            historyData.forEach(item => {
+                const date = new Date(item.date);
+                const storeList = item.products.map(p => p.store).join(' vs ');
+                const priceRange = item.products.map(p => {
+                    const price = p.details.Price.replace(/[^0-9.]/g, '');
+                    return `$${Math.round(parseFloat(price))}`;
+                }).join(' - ');
+
+                const itemHtml = `
+                    <div class="history-item">
+                        <div class="history-content">
+                            <div class="history-title">
+                                <i class="fas fa-balance-scale"></i> ${item.product.charAt(0).toUpperCase() + item.product.slice(1)} Comparison
+                            </div>
+                            <div class="history-meta">
+                                <div class="history-meta-item">
+                                    <i class="fas fa-calendar"></i> ${date.toLocaleDateString()}
+                                </div>
+                                <div class="history-meta-item">
+                                    <i class="fas fa-clock"></i> ${date.toLocaleTimeString()}
+                                </div>
+                                <div class="history-meta-item">
+                                    <i class="fas fa-store"></i> ${storeList}
+                                </div>
+                                <div class="history-meta-item">
+                                    <i class="fas fa-tag"></i> ${priceRange}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="history-actions">
+                            <button class="btn-action btn-view" onclick="viewComparison('${item.id}')">
+                                <i class="fas fa-eye"></i> View
+                            </button>
+                            <button class="btn-action btn-delete" onclick="deleteComparison('${item.id}')">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                        </div>
+                    </div>
+                `;
+
+                historyList.innerHTML += itemHtml;
+            });
+        }
+
+        function filterHistory(type) {
+            const historyData = [];
+            
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key.startsWith('comparison_')) {
+                    try {
+                        const data = JSON.parse(localStorage.getItem(key));
+                        data.id = key;
+                        historyData.push(data);
+                    } catch (e) {}
+                }
+            }
+
+            const now = new Date();
+            let filtered = historyData;
+
+            if (type === 'today') {
+                filtered = historyData.filter(item => {
+                    const itemDate = new Date(item.date);
+                    return itemDate.toDateString() === now.toDateString();
+                });
+            } else if (type === 'week') {
+                const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+                filtered = historyData.filter(item => {
+                    const itemDate = new Date(item.date);
+                    return itemDate >= weekAgo;
+                });
+            }
+
+            filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
+            displayHistory(filtered);
+
+            // Update filter buttons
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+
+        function viewComparison(id) {
+            const data = JSON.parse(localStorage.getItem(id));
+            console.log('Viewing comparison:', data);
+            alert(`📊 Comparison Details\n\nProduct: ${data.product}\nDate: ${data.date}\n\nStores compared: ${data.products.map(p => p.store).join(', ')}\n\nCheck the Product Comparison page for full details!`);
+        }
+
+        function deleteComparison(id) {
+            if (confirm('Are you sure you want to delete this comparison?')) {
+                localStorage.removeItem(id);
+                loadHistory();
+            }
+        }
+
+        function clearAllHistory() {
+            if (confirm('Are you sure you want to delete ALL comparisons? This cannot be undone.')) {
+                const keys = [];
+                for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    if (key.startsWith('comparison_')) {
+                        keys.push(key);
+                    }
+                }
+                keys.forEach(key => localStorage.removeItem(key));
+                loadHistory();
+            }
+        }
+    </script>
+</body>
+</html>

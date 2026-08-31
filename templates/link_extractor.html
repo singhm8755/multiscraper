@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Link Extractor - MultiScraper</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        /* BEAUTIFUL NAVBAR STYLING */
+        .navbar-custom {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            padding: 0;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 40px;
+            height: 70px;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .navbar-brand {
+            font-size: 24px;
+            font-weight: 700;
+            color: #27ae60 !important;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+        }
+
+        .navbar-brand:hover {
+            transform: scale(1.05);
+            color: #2ecc71 !important;
+        }
+
+        .nav-items {
+            display: flex;
+            gap: 0;
+            list-style: none;
+            height: 100%;
+            align-items: center;
+        }
+
+        .nav-item {
+            height: 100%;
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            height: 100%;
+            padding: 0 25px;
+            color: #bdc3c7 !important;
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 3px;
+            background: #27ae60;
+            transform: translateX(-50%);
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: #27ae60 !important;
+            background: rgba(39, 174, 96, 0.1);
+        }
+
+        .nav-link:hover::after {
+            width: 60%;
+        }
+
+        .nav-link.active {
+            color: #27ae60 !important;
+            background: rgba(39, 174, 96, 0.15);
+        }
+
+        .nav-link.active::after {
+            width: 60%;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px 0;
+        }
+
+        .container {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            max-width: 1200px;
+            margin-top: 30px;
+        }
+
+        .header { text-align: center; margin-bottom: 40px; }
+        .header h1 { color: #667eea; font-weight: bold; margin-bottom: 10px; }
+
+        .search-box { margin-bottom: 30px; }
+        .search-box input {
+            border-radius: 25px;
+            padding: 12px 20px;
+            border: 2px solid #667eea;
+            font-size: 16px;
+        }
+        .search-box button {
+            border-radius: 25px;
+            padding: 12px 30px;
+            background: #667eea;
+            border: none;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .search-box button:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+        }
+
+        .stats-bar {
+            display: none;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 5px solid #667eea;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-item { text-align: center; }
+        .stat-number { font-size: 28px; font-weight: bold; color: #667eea; }
+        .stat-label { font-size: 12px; color: #999; text-transform: uppercase; }
+
+        .links-table {
+            display: none;
+            margin-top: 30px;
+        }
+        .links-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .links-table thead { background: #f8f9fa; }
+        .links-table th { padding: 15px; text-align: left; font-weight: 600; color: #667eea; }
+        .links-table td { padding: 12px 15px; border-bottom: 1px solid #eee; }
+        .links-table tr:hover { background: #f8f9fa; }
+
+        .link-type {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .link-type.internal { background: #d4edda; color: #155724; }
+        .link-type.external { background: #d1ecf1; color: #0c5460; }
+
+        .loading-spinner {
+            display: none;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error-message {
+            display: none;
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border-left: 4px solid #c3184a;
+        }
+
+        .export-btn { margin-top: 20px; display: none; }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .navbar-wrapper {
+                flex-wrap: wrap;
+                padding: 10px 20px;
+                height: auto;
+            }
+            .navbar-brand {
+                width: 100%;
+                padding: 10px 0;
+            }
+            .nav-items {
+                width: 100%;
+                gap: 5px;
+            }
+            .nav-link {
+                padding: 0 15px;
+                font-size: 13px;
+            }
+            .container {
+                margin: 20px 10px;
+            }
+            .links-table {
+                font-size: 12px;
+            }
+            .links-table th, .links-table td {
+                padding: 8px 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- BEAUTIFUL NAVIGATION BAR -->
+       <nav class="navbar-custom">
+        <div class="navbar-wrapper">
+            <a href="/" class="navbar-brand">
+                <i class="fas fa-spider"></i> MultiScraper
+            </a>
+            <ul class="nav-items">
+                <li class="nav-item">
+                    <a href="/" class="nav-link" data-path="/">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/image-extractor" class="nav-link" data-path="/image-extractor">Image Extractor</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/seo-analyzer" class="nav-link" data-path="/seo-analyzer">SEO Analyzer</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/link-extractor" class="nav-link" data-path="/link-extractor">Link Extractor</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/product-comparison" class="nav-link" data-path="/product-comparison">Product Comparison</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/history" class="nav-link" data-path="/history">History</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/statistics" class="nav-link" data-path="/statistics">Statistics</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="header">
+            <h1>Link Extractor</h1>
+            <p>Extract all links from any website and categorize them</p>
+        </div>
+
+        <div class="error-message" id="errorMessage"></div>
+
+        <div class="search-box">
+            <div class="row">
+                <div class="col-md-10">
+                    <input type="text" id="urlInput" class="form-control" placeholder="Enter website URL (e.g., https://www.example.com)">
+                </div>
+                <div class="col-md-2">
+                    <button onclick="extractLinks()" class="btn btn-block" style="background: #667eea; border: none; color: white;">
+                        <i class="fas fa-link"></i> Extract
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="loading-spinner" id="loadingSpinner">
+            <div class="spinner"></div>
+            <p>Extracting links...</p>
+        </div>
+
+        <div class="stats-bar" id="statsBar" style="display: none;">
+            <div class="stat-item">
+                <div class="stat-number" id="totalLinks">0</div>
+                <div class="stat-label">Total Links</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" id="internalCount">0</div>
+                <div class="stat-label">Internal</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" id="externalCount">0</div>
+                <div class="stat-label">External</div>
+            </div>
+            <div class="stat-item">
+                <button onclick="exportLinksCSV()" class="btn btn-sm btn-outline-primary">
+                    <i class="fas fa-download"></i> Export CSV
+                </button>
+            </div>
+        </div>
+
+        <div class="links-table" id="linksTable">
+            <h3>Extracted Links</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>URL</th>
+                        <th>Link Text</th>
+                        <th>Type</th>
+                    </tr>
+                </thead>
+                <tbody id="linksTableBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        function extractLinks() {
+            const url = document.getElementById('urlInput').value.trim();
+            if (!url) {
+                showError('Please enter a URL');
+                return;
+            }
+
+            showLoading();
+            clearMessages();
+
+            const formData = new FormData();
+            formData.append('url', url);
+
+            fetch('/extract-links', { method: 'POST', body: formData })
+                .then(response => response.json())
+                .then(data => {
+                    hideLoading();
+                    if (data.success) {
+                        displayLinks(data.data, data.stats);
+                    } else {
+                        showError(data.error || 'Failed to extract links');
+                    }
+                })
+                .catch(error => {
+                    hideLoading();
+                    showError('Error: ' + error.message);
+                });
+        }
+
+        function displayLinks(links, stats) {
+            const tbody = document.getElementById('linksTableBody');
+            tbody.innerHTML = '';
+            
+            links.forEach(link => {
+                const row = tbody.insertRow();
+                row.innerHTML = `
+                    <td><a href="${link.url}" target="_blank" style="color: #667eea;">${link.url.substring(0, 50)}...</a></td>
+                    <td>${link.text.substring(0, 50)}</td>
+                    <td><span class="link-type ${link.type}">${link.type.toUpperCase()}</span></td>
+                `;
+            });
+
+            document.getElementById('totalLinks').textContent = stats.total;
+            document.getElementById('internalCount').textContent = stats.internal;
+            document.getElementById('externalCount').textContent = stats.external;
+
+            document.getElementById('statsBar').style.display = 'grid';
+            document.getElementById('linksTable').style.display = 'block';
+        }
+
+        function exportLinksCSV() {
+            // Implementation for CSV export
+            alert("CSV export feature coming soon!");
+        }
+
+        function showLoading() {
+            document.getElementById('loadingSpinner').style.display = 'block';
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingSpinner').style.display = 'none';
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.innerHTML = message;
+            errorDiv.style.display = 'block';
+        }
+
+        function clearMessages() {
+            document.getElementById('errorMessage').style.display = 'none';
+        }
+
+        document.getElementById('urlInput').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                extractLinks();
+            }
+        });
+
+        // Highlight active nav link
+        document.addEventListener('DOMContentLoaded', function() {
+            const path = window.location.pathname;
+            const links = document.querySelectorAll('.nav-link');
+            links.forEach(link => {
+                if (link.getAttribute('href') === path) {
+                    link.classList.add('active');
+                } else {
+                    link.classList.remove('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

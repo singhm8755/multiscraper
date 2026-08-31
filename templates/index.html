@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MultiScraper - Professional Web Scraping Platform</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* ===== UNIVERSAL NAVBAR STYLING ===== */
+        .navbar-custom {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            padding: 0;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .navbar-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 40px;
+            height: 70px;
+            max-width: 100%;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .navbar-brand {
+            font-size: 24px;
+            font-weight: 700;
+            color: #27ae60 !important;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .navbar-brand:hover {
+            transform: scale(1.05);
+            color: #2ecc71 !important;
+        }
+
+        .nav-items {
+            display: flex;
+            gap: 0;
+            list-style: none;
+            height: 100%;
+            align-items: center;
+            margin: 0;
+        }
+
+        .nav-item {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            margin: 0;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            height: 100%;
+            padding: 0 20px;
+            color: #bdc3c7 !important;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+            white-space: nowrap;
+        }
+
+        .nav-link:hover {
+            color: #27ae60 !important;
+            background: rgba(39, 174, 96, 0.1);
+        }
+
+        .nav-link.active {
+            color: #27ae60 !important;
+            background: rgba(39, 174, 96, 0.15);
+            border-bottom: 3px solid #27ae60;
+        }
+
+        /* HERO SECTION */
+        .hero {
+            background: linear-gradient(135deg, #27ae60 0%, #2196F3 100%);
+            color: white;
+            padding: 80px 40px;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 48px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .hero p {
+            font-size: 20px;
+            margin-bottom: 40px;
+            opacity: 0.9;
+        }
+
+        /* TOOLS GRID */
+        body {
+            background: #1a1a1a;
+            color: #fff;
+        }
+
+        .container-tools {
+            max-width: 1200px;
+            margin: 60px auto;
+            padding: 0 40px;
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .tool-card {
+            background: linear-gradient(135deg, #27ae60 0%, #2196F3 100%);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transition: 0.3s;
+        }
+
+        .tool-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .tool-icon {
+            text-align: center;
+            padding: 40px 20px;
+            font-size: 48px;
+        }
+
+        .tool-body {
+            background: #2a2a2a;
+            padding: 30px 20px;
+        }
+
+        .tool-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #27ae60;
+        }
+
+        .tool-description {
+            font-size: 14px;
+            color: #bbb;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .tool-btn {
+            background: linear-gradient(135deg, #27ae60 0%, #2196F3 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            text-decoration: none;
+            display: inline-block;
+            transition: 0.3s;
+        }
+
+        .tool-btn:hover {
+            transform: scale(1.05);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .navbar-wrapper {
+                padding: 0 20px;
+            }
+            .nav-link {
+                padding: 0 15px;
+                font-size: 13px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .navbar-wrapper {
+                flex-wrap: wrap;
+                padding: 10px 15px;
+                height: auto;
+            }
+            .navbar-brand {
+                width: 100%;
+                padding: 10px 0;
+                font-size: 18px;
+            }
+            .nav-items {
+                width: 100%;
+                flex-wrap: wrap;
+            }
+            .nav-link {
+                padding: 8px 12px;
+                font-size: 12px;
+            }
+            .hero h1 {
+                font-size: 32px;
+            }
+            .tools-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- UNIVERSAL NAVIGATION BAR -->
+    <nav class="navbar-custom">
+        <div class="navbar-wrapper">
+            <a href="/" class="navbar-brand">
+                <i class="fas fa-spider"></i> MultiScraper
+            </a>
+            <ul class="nav-items">
+                <li class="nav-item">
+                    <a href="/" class="nav-link" data-path="/">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/image-extractor" class="nav-link" data-path="/image-extractor">Image Extractor</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/seo-analyzer" class="nav-link" data-path="/seo-analyzer">SEO Analyzer</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/link-extractor" class="nav-link" data-path="/link-extractor">Link Extractor</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/product-comparison" class="nav-link" data-path="/product-comparison">Product Comparison</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/history" class="nav-link" data-path="/history">History</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/statistics" class="nav-link" data-path="/statistics">Statistics</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <div class="hero">
+        <i class="fas fa-spider" style="font-size: 48px; margin-bottom: 20px;"></i>
+        <h1>MultiScraper Platform</h1>
+        <p>Professional Web Scraping & Data Extraction Tools</p>
+    </div>
+
+    <!-- TOOLS SECTION -->
+    <div class="container-tools">
+        <div class="tools-grid">
+            <!-- Image Extractor -->
+            <div class="tool-card">
+                <div class="tool-icon">🖼️</div>
+                <div class="tool-body">
+                    <div class="tool-title">Image Extractor</div>
+                    <div class="tool-description">Extract Images</div>
+                    <p style="font-size: 13px; color: #999; margin-bottom: 15px;">Automatically download all images from any website. Get alt text and metadata.</p>
+                    <a href="/image-extractor" class="tool-btn">Open Tool</a>
+                </div>
+            </div>
+
+            <!-- SEO Analyzer -->
+            <div class="tool-card">
+                <div class="tool-icon">📊</div>
+                <div class="tool-body">
+                    <div class="tool-title">SEO Auditor</div>
+                    <div class="tool-description">Website Analysis</div>
+                    <p style="font-size: 13px; color: #999; margin-bottom: 15px;">Analyze any webpage for SEO health. Check meta tags, headers, links, and get a health score.</p>
+                    <a href="/seo-analyzer" class="tool-btn">Open Tool</a>
+                </div>
+            </div>
+
+            <!-- Link Extractor -->
+            <div class="tool-card">
+                <div class="tool-icon">🔗</div>
+                <div class="tool-body">
+                    <div class="tool-title">Link Extractor</div>
+                    <div class="tool-description">Link Analysis</div>
+                    <p style="font-size: 13px; color: #999; margin-bottom: 15px;">Extract and validate all hyperlinks from a webpage. Categorize internal and external links.</p>
+                    <a href="/link-extractor" class="tool-btn">Open Tool</a>
+                </div>
+            </div>
+
+            <!-- Product Comparison (NEW) -->
+            <div class="tool-card">
+                <div class="tool-icon">⚖️</div>
+                <div class="tool-body">
+                    <div class="tool-title">Product Comparison</div>
+                    <div class="tool-description">Compare Products</div>
+                    <p style="font-size: 13px; color: #999; margin-bottom: 15px;">Compare products across multiple stores side-by-side. Find best prices and specifications.</p>
+                    <a href="/product-comparison" class="tool-btn">Open Tool</a>
+                </div>
+            </div>
+
+            <!-- History -->
+            <div class="tool-card">
+                <div class="tool-icon">📋</div>
+                <div class="tool-body">
+                    <div class="tool-title">History</div>
+                    <div class="tool-description">Scraping History</div>
+                    <p style="font-size: 13px; color: #999; margin-bottom: 15px;">View all your past scraping jobs. Track URLs, tools used, results count, and timestamps.</p>
+                    <a href="/history" class="tool-btn">View History</a>
+                </div>
+            </div>
+
+            <!-- Statistics -->
+            <div class="tool-card">
+                <div class="tool-icon">📈</div>
+                <div class="tool-body">
+                    <div class="tool-title">Statistics</div>
+                    <div class="tool-description">Analytics Dashboard</div>
+                    <p style="font-size: 13px; color: #999; margin-bottom: 15px;">Visual metrics, charts, and analytics. Track tools usage and daily activity trends.</p>
+                    <a href="/statistics" class="tool-btn">View Stats</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Auto-highlight active nav link
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentPath = window.location.pathname;
+            const navLinks = document.querySelectorAll('.nav-link');
+            
+            navLinks.forEach(link => {
+                const dataPath = link.getAttribute('data-path');
+                if (dataPath === currentPath || (dataPath === '/' && currentPath === '/')) {
+                    link.classList.add('active');
+                } else {
+                    link.classList.remove('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
