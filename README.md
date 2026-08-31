@@ -1,3 +1,4 @@
+cat > README.md << 'EOF'
 # Multi-Scraper Tool
 
 A Flask-based web scraping application for extracting images, links, analyzing SEO metrics, and comparing product prices across UK retailers.
@@ -29,7 +30,6 @@ pip install -r requirements.txt
 
 ```bash
 cp .env.example .env
-# Edit .env with your configuration
 ```
 
 ### Run the Application
@@ -49,7 +49,8 @@ Visit `http://localhost:5000` in your browser.
 | Web Scraping | BeautifulSoup4, Requests |
 | Frontend | HTML5, CSS3, JavaScript |
 
-## Project Structuremultiscraper/
+## Project Structure
+multiscraper/
 ├── app.py # Main Flask application
 ├── requirements.txt # Python dependencies
 ├── .env.example # Environment variables template
@@ -66,6 +67,7 @@ Visit `http://localhost:5000` in your browser.
 ├── css/ # Stylesheets
 ├── js/ # JavaScript files
 └── images/ # Downloaded images (git ignored)
+
 
 ## Database Models
 
@@ -140,3 +142,4 @@ MIT License
 ---
 
 **Made with ❤️ for portfolio demonstration**
+EOF
